@@ -59,8 +59,6 @@ public class TaskManager {
         Epic existingEpic = epics.get(updatedEpic.getId());
         existingEpic.setName(updatedEpic.getName());
         existingEpic.setDescription(updatedEpic.getDescription());
-        // Статус рассчитывается на основе подзадач
-        updateEpicStatus(existingEpic);
         return true;
     }
 
