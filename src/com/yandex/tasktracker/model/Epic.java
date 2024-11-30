@@ -1,38 +1,41 @@
 package com.yandex.tasktracker.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    private final ArrayList<Subtask> subtasks = new ArrayList<>(); // поле теперь private final
+    // Теперь список содержит id подзадач, а не сами подзадачи
+    private final List<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
     }
 
-    public ArrayList<Subtask> getSubtasks() {
-        return new ArrayList<>(subtasks);
+    public List<Integer> getSubtaskIds() {
+        return new ArrayList<>(subtaskIds);
     }
 
-    public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
+    public void addSubtask(int subtaskId) {
+        subtaskIds.add(subtaskId);
     }
 
-    public void removeSubtask(Subtask subtask) {
-        subtasks.remove(subtask);
+    public void removeSubtask(int subtaskId) {
+        subtaskIds.remove((Integer) subtaskId);
     }
 
     public void clearSubtasks() {
-        subtasks.clear();
+        subtaskIds.clear();
     }
 
     @Override
     public String toString() {
         return "Epic{" +
-                " id=" + id + // убран геттер
-                ", subtasksSize=" + subtasks.size() +
+                " id=" + id +
+                ", subtaskIds=" + subtaskIds +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';
     }
 }
+

@@ -1,11 +1,14 @@
-package com.yandex.tasktracker;
+// Вместо мэйна используем тесты
+
+/*package com.yandex.tasktracker;
 
 import com.yandex.tasktracker.model.*;
+import com.yandex.tasktracker.service.Managers;
 import com.yandex.tasktracker.service.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         // Создаем 2 простые задачи
         Task task1 = new Task("Задача №1", "Описание задачи №1");
@@ -63,5 +66,5 @@ public class Main {
         System.out.println("Все эпики: " + taskManager.getAllEpics());
         System.out.println("Все подзадачи: " + taskManager.getAllSubtasks());
     }
-}
+}*/
 

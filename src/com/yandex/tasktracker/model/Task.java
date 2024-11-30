@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Task {
 
-    // добавлены все геттеры\сеттеры
     protected int id = 0; // поле теперь protected
     protected String name;
     protected String description;
@@ -52,7 +51,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id;
+        return id == task.id; // Сравнение только по ID
     }
 
     @Override
@@ -63,7 +62,7 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-                " id=" + id + // убран геттер
+                " id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
