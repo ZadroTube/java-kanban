@@ -188,6 +188,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
     public boolean updateEpic(Epic updatedEpic) {
         if (!epics.containsKey(updatedEpic.getId())) {
             return false;
@@ -199,6 +200,7 @@ public class InMemoryTaskManager implements TaskManager {
         return true;
     }
 
+    @Override
     public boolean updateSubtask(Subtask updatedSubtask) {
         if (!subtasks.containsKey(updatedSubtask.getId())) {
             return false;
@@ -213,6 +215,7 @@ public class InMemoryTaskManager implements TaskManager {
         return true;
     }
 
+    @Override
     public boolean updateTask(Task updatedTask) {
         if (!tasks.containsKey(updatedTask.getId())) {
             return false;

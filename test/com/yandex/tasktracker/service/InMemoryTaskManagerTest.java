@@ -17,13 +17,18 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldAddTasksAndFindById() {
-        Task task = new Task("Задача 1", "Описание 1");
-        int taskId = manager.addTask(task);
-        Task savedTask = manager.getTaskById(taskId);
+    void shouldAddSubtaskCorrectly() {
+        Epic epic = new Epic("Эпик 1", "описание");
+        int epicId = manager.addEpic(epic);
 
-        assertNotNull(savedTask, "Задача не сохранена");
-        assertEquals("Задача 1", savedTask.getName(), "Имя не совпадает");
+        Subtask subtask = new Subtask("Подзадача 1", "описание", epicId);
+        int subtaskId = manager.addSubtask(subtask);
+
+        assertTrue(subtaskId > 0);
+        Subtask savedSubtask = manager.getSubtaskById(subtaskId);
+        assertNotNull(savedSubtask);
+        assertEquals(subtask.getName(), savedSubtask.getName());
+        assertEquals(subtask.getEpicId(), savedSubtask.getEpicId());
     }
 
     @Test
@@ -40,6 +45,36 @@ public class InMemoryTaskManagerTest {
 
         assertNotNull(manager.getEpicById(epicId), "Эпик не сохранен");
         assertEquals(2, subtasks.size(), "У эпика должно быть 2 задачи");
+    }
+
+    @Test
+    void shouldUpdateEpic() {
+        Epic epic = new Epic("Эпик 1", "Описание 1");
+        int epicId = manager.addEpic(epic);
+
+        // Изменяем поля эпика
+        Epic updatedEpic = manager.getEpicById(epicId);
+        updatedEpic.setName("Обновленный эпик");
+        updatedEpic.setDescription("Обновленное описание");
+
+        // Добавляем эпик обратно в менеджер
+        manager.addEpic(updatedEpic);
+
+        // Проверяем изменения
+        Epic savedEpic = manager.getEpicById(epicId);
+        assertNotNull(savedEpic, "Эпик должен существовать");
+        assertEquals("Обновленный эпик", savedEpic.getName(), "имя эпика должно обновиться");
+        assertEquals("Обновленное описание", savedEpic.getDescription(), "описание должно обновиться");
+    }
+
+    @Test
+    void shouldAddTasksAndFindById() {
+        Task task = new Task("Задача 1", "Описание 1");
+        int taskId = manager.addTask(task);
+        Task savedTask = manager.getTaskById(taskId);
+
+        assertNotNull(savedTask, "Задача не сохранена");
+        assertEquals("Задача 1", savedTask.getName(), "Имя не совпадает");
     }
 
     @Test
@@ -65,117 +100,12 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldUpdateEpic() {
-        Epic epic = new Epic("Эпик 1", "Описание 1");
-        int epicId = manager.addEpic(epic);
-
-        // Изменяем поля эпика
-        Epic updatedEpic = manager.getEpicById(epicId);
-        updatedEpic.setName("Обновленный эпик");
-        updatedEpic.setDescription("Обновленное описание");
-
-        // Добавляем эпик обратно в менеджер
-        manager.addEpic(updatedEpic);
-
-        // Проверяем изменения
-        Epic savedEpic = manager.getEpicById(epicId);
-        assertNotNull(savedEpic, "Эпик должен существовать");
-        assertEquals("Обновленный эпик", savedEpic.getName(), "имя эпика должно обновиться");
-        assertEquals("Обновленное описание", savedEpic.getDescription(), "описание должно обновиться");
-    }
-
-    @Test
-    void shouldUpdateSubtask() {
-        Epic epic = new Epic("Эпик 1", "Описание 1");
-        int epicId = manager.addEpic(epic);
-
-        Subtask subtask = new Subtask("Подзадача 1", "описание", epicId);
-        int subtaskId = manager.addSubtask(subtask);
-
-        // Изменяем поля подзадачи
-        Subtask updatedSubtask = manager.getSubtaskById(subtaskId);
-        updatedSubtask.setName("подзадача обновлена");
-        updatedSubtask.setDescription("новое описание");
-        updatedSubtask.setStatus(Status.DONE);
-
-        // Добавляем подзадачу обратно в менеджер
-        manager.addSubtask(updatedSubtask);
-
-        // Проверяем изменения
-        Subtask savedSubtask = manager.getSubtaskById(subtaskId);
-        assertNotNull(savedSubtask, "подзадача должна быть");
-        assertEquals("подзадача обновлена", savedSubtask.getName());
-        assertEquals("новое описание", savedSubtask.getDescription());
-        assertEquals(Status.DONE, savedSubtask.getStatus());
-    }
-
-    @Test
-    void tasksShouldBeEqualIfIdsAreEqual() {
-        Task task1 = new Task("Задача 1", "Описание 1");
-        Task task2 = new Task("Задача 2", "Описание 2");
-
-        task1.setId(1);
-        task2.setId(1);
-
-        assertEquals(task1, task2);
-    }
-
-    @Test
-    void subtasksAndEpicsShouldNotBeEqualEvenWithSameIds() {
-        // Создаём подзадачу и эпик с одинаковыми ID
-        Subtask subtask = new Subtask("Подзадача", "описание", 1);
-        Epic epic = new Epic("Эпик", "описание");
-
-        subtask.setId(1);
-        epic.setId(1);
-
-        // Проверяем, что они не равны
-        assertNotEquals(subtask, epic);
-    }
-
-    @Test
     void shouldNotAllowSubtaskForNonExistentEpic() {
         Subtask subtask = new Subtask("Подзадача 1", "описание", 999); // Невалидный ID эпика
 
         int result = manager.addSubtask(subtask);
 
         assertEquals(-1, result);
-    }
-
-    @Test
-    void shouldAddSubtaskCorrectly() {
-        Epic epic = new Epic("Эпик 1", "описание");
-        int epicId = manager.addEpic(epic);
-
-        Subtask subtask = new Subtask("Подзадача 1", "описание", epicId);
-        int subtaskId = manager.addSubtask(subtask);
-
-        assertTrue(subtaskId > 0);
-        Subtask savedSubtask = manager.getSubtaskById(subtaskId);
-        assertNotNull(savedSubtask);
-        assertEquals(subtask.getName(), savedSubtask.getName());
-        assertEquals(subtask.getEpicId(), savedSubtask.getEpicId());
-    }
-
-    @Test
-    void shouldReturnInitializedManagers() {
-        TaskManager taskManager = Managers.getDefault();
-        HistoryManager historyManager = Managers.getDefaultHistory();
-
-        assertNotNull(taskManager);
-        assertNotNull(historyManager);
-    }
-
-    @Test
-    void shouldMaintainCorrectHistory() {
-        Task task = new Task("Задача 1", "Описание 1");
-        int taskId = manager.addTask(task);
-
-        manager.getTaskById(taskId);
-        List<Task> history = manager.getHistory();
-
-        assertEquals(1, history.size());
-        assertEquals("Задача 1", history.get(0).getName());
     }
 
     @Test
@@ -214,6 +144,31 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
+    void shouldUpdateSubtask() {
+        Epic epic = new Epic("Эпик 1", "Описание 1");
+        int epicId = manager.addEpic(epic);
+
+        Subtask subtask = new Subtask("Подзадача 1", "описание", epicId);
+        int subtaskId = manager.addSubtask(subtask);
+
+        // Изменяем поля подзадачи
+        Subtask updatedSubtask = manager.getSubtaskById(subtaskId);
+        updatedSubtask.setName("подзадача обновлена");
+        updatedSubtask.setDescription("новое описание");
+        updatedSubtask.setStatus(Status.DONE);
+
+        // Добавляем подзадачу обратно в менеджер
+        manager.addSubtask(updatedSubtask);
+
+        // Проверяем изменения
+        Subtask savedSubtask = manager.getSubtaskById(subtaskId);
+        assertNotNull(savedSubtask, "подзадача должна быть");
+        assertEquals("подзадача обновлена", savedSubtask.getName());
+        assertEquals("новое описание", savedSubtask.getDescription());
+        assertEquals(Status.DONE, savedSubtask.getStatus());
+    }
+
+    @Test
     void shouldNotModifyTaskWhenAddingToManager() {
         Task task = new Task("Задача 1", "Описание 1");
         task.setId(1);
@@ -228,13 +183,14 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    void tasksOfDifferentTypesShouldNotBeEqual() {
-        Subtask subtask = new Subtask("Подзадача", "описание", 1);
-        Epic epic = new Epic("Эпик", "описание");
+    void shouldMaintainCorrectHistory() {
+        Task task = new Task("Задача 1", "Описание 1");
+        int taskId = manager.addTask(task);
 
-        subtask.setId(1);
-        epic.setId(1);
+        manager.getTaskById(taskId);
+        List<Task> history = manager.getHistory();
 
-        assertNotEquals(subtask, epic);
+        assertEquals(1, history.size());
+        assertEquals("Задача 1", history.get(0).getName());
     }
 }

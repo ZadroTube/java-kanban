@@ -12,6 +12,10 @@ public interface TaskManager {
     int addEpic(Epic epic);
     int addSubtask(Subtask subtask);
 
+    boolean updateTask(Task updatedTask);
+    boolean updateSubtask(Subtask updatedSubtask);
+    boolean updateEpic(Epic updatedEpic);
+
     Task getTaskById(int id);
     Epic getEpicById(int id);
     Subtask getSubtaskById(int id);
